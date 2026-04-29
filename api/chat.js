@@ -23,10 +23,8 @@ export default async function handler(req, res) {
 
     const fullPrompt = `${systemPrompt}\n\nUser: ${message}\nRespond as the persona.`;
 
-    const API_KEY = process.env.GEMINI_API_KEY;
-
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: "POST",
         headers: {
@@ -35,6 +33,7 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           contents: [
             {
+              role: "user",
               parts: [{ text: fullPrompt }],
             },
           ],
@@ -45,9 +44,9 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("Gemini API Error:", data);
+      console.error("Gemini Error:", data);
       return res.status(500).json({
-        error: data.error?.message || "API request failed.",
+        error: data.error?.message || "API request failed",
       });
     }
 
