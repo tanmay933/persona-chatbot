@@ -16,51 +16,59 @@ export default async function handler(req, res) {
 
     let systemPrompt;
 
-    // Persona logic
+    // Persona selection
     if (persona === "anshuman") systemPrompt = anshumanPrompt;
     else if (persona === "abhimanyu") systemPrompt = abhimanyuPrompt;
     else if (persona === "kshitij") systemPrompt = kshitijPrompt;
     else return res.status(400).json({ error: "Invalid persona" });
 
-    // Constructing the prompt with a clear instruction
-    const fullPrompt = `${systemPrompt}\n\nUser: ${message}\nRespond as the persona.`;
+    // Construct prompt
+    const fullPrompt = `
+${systemPrompt}
 
-    // Updated URL: Using v1 endpoint and gemini-2.5-flash (current stable)
-    // You can also use "gemini-3-flash-preview" for the absolute latest version
-    const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
+User: ${message}
+Respond as the persona.
+`;
 
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: fullPrompt }],
-          },
-        ],
-      }),
-    });
+    // Stable Gemini API (DO NOT CHANGE)
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [{ text: fullPrompt }],
+            },
+          ],
+        }),
+      }
+    );
 
     const data = await response.json();
 
+    // Handle API errors clearly
     if (!response.ok) {
-      console.error("Gemini API Error Detail:", JSON.stringify(data, null, 2));
-      return res.status(response.status).json({
-        error: data.error?.message || "Gemini API request failed.",
+      console.error("Gemini Error:", data);
+      return res.status(500).json({
+        error: data.error?.message || "Gemini API failed",
       });
     }
 
-    // Safely extract the reply
+    // Extract response safely
     const reply =
       data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
-      "I'm sorry, I couldn't generate a response.";
+      "No response generated";
 
     return res.status(200).json({ reply });
 
   } catch (err) {
-    console.error("Server-side error:", err);
-    return res.status(500).json({ error: "An internal server error occurred." });
+    console.error("Server crash:", err);
+    return res.status(500).json({
+      error: "Internal server error",
+    });
   }
 }
