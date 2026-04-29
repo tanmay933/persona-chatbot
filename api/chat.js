@@ -21,21 +21,19 @@ export default async function handler(req, res) {
     else if (persona === "kshitij") systemPrompt = kshitijPrompt;
     else return res.status(400).json({ error: "Invalid persona" });
 
-    const fullPrompt = `${systemPrompt}\n\nUser: ${message}\nRespond as the persona.`;
-
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      "https://api.groq.com/openai/v1/chat/completions",
       {
         method: "POST",
         headers: {
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          contents: [
-            {
-              role: "user",
-              parts: [{ text: fullPrompt }],
-            },
+          model: "llama3-8b-8192",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: message }
           ],
         }),
       }
@@ -44,14 +42,14 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("Gemini Error:", data);
+      console.error("Groq Error:", data);
       return res.status(500).json({
-        error: data.error?.message || "API request failed",
+        error: data.error?.message || "Groq API failed",
       });
     }
 
     const reply =
-      data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
+      data.choices?.[0]?.message?.content ||
       "No response generated";
 
     return res.status(200).json({ reply });
