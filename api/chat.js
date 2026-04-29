@@ -16,23 +16,17 @@ export default async function handler(req, res) {
 
     let systemPrompt;
 
-    // Persona selection
     if (persona === "anshuman") systemPrompt = anshumanPrompt;
     else if (persona === "abhimanyu") systemPrompt = abhimanyuPrompt;
     else if (persona === "kshitij") systemPrompt = kshitijPrompt;
     else return res.status(400).json({ error: "Invalid persona" });
 
-    // Construct prompt
-    const fullPrompt = `
-${systemPrompt}
+    const fullPrompt = `${systemPrompt}\n\nUser: ${message}\nRespond as the persona.`;
 
-User: ${message}
-Respond as the persona.
-`;
+    const API_KEY = process.env.GEMINI_API_KEY;
 
-    // Stable Gemini API (DO NOT CHANGE)
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`,
       {
         method: "POST",
         headers: {
@@ -50,15 +44,13 @@ Respond as the persona.
 
     const data = await response.json();
 
-    // Handle API errors clearly
     if (!response.ok) {
-      console.error("Gemini Error:", data);
+      console.error("Gemini API Error:", data);
       return res.status(500).json({
-        error: data.error?.message || "Gemini API failed",
+        error: data.error?.message || "API request failed.",
       });
     }
 
-    // Extract response safely
     const reply =
       data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
       "No response generated";
@@ -68,7 +60,7 @@ Respond as the persona.
   } catch (err) {
     console.error("Server crash:", err);
     return res.status(500).json({
-      error: "Internal server error",
+      error: "Something went wrong",
     });
   }
 }
