@@ -26,29 +26,24 @@ export default function Home() {
 
   const switchPersona = (p) => {
     setPersona(p);
-    setMessages([]); // required
+    setMessages([]);
   };
 
   return (
-    <div style={{ maxWidth: "600px", margin: "auto", padding: "20px" }}>
-      <h2>Persona Chatbot</h2>
+    <div className="app-container">
+      <h2 className="app-title">Persona Chatbot</h2>
 
-      {/* Persona Switcher */}
       <PersonaSwitcher current={persona} onChange={switchPersona} />
 
-      {/* Suggestions */}
       <SuggestionChips persona={persona} onClick={handleSend} />
 
-      {/* Chat Window */}
       <ChatWindow messages={messages} loading={loading} />
 
-      {/* Input */}
-      <div style={{ marginTop: "15px", display: "flex", gap: "10px" }}>
+      <div className="input-bar">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask something..."
-          style={{ flex: 1, padding: "8px" }}
           onKeyDown={(e) => {
             if (e.key === "Enter") handleSend();
           }}

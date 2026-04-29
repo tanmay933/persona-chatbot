@@ -109,3 +109,91 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* ===== CHAT UI ===== */
+
+.app-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.app-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.chat-window {
+  margin-top: 20px;
+  height: 400px;
+  overflow-y: auto;
+  border-radius: 12px;
+  padding: 15px;
+  background: #1e293b;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-row {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.message-row.user {
+  justify-content: flex-end;
+}
+
+.message-row.bot {
+  justify-content: flex-start;
+}
+
+.message-bubble {
+  max-width: 70%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.message-row.user .message-bubble {
+  background: #2563eb;
+  color: white;
+}
+
+.message-row.bot .message-bubble {
+  background: #334155;
+  color: #e2e8f0;
+}
+
+.input-bar {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.input-bar input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #1e293b;
+  color: white;
+}
+
+.input-bar input::placeholder {
+  color: #94a3b8;
+}
+
+.input-bar button {
+  padding: 10px 16px;
+  background: #2563eb;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.input-bar button:hover {
+  background: #1d4ed8;
+}
