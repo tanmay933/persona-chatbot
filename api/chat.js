@@ -1,5 +1,3 @@
-import 'dotenv/config';
-
 import { anshumanPrompt } from "../prompts/anshumanPrompt.js";
 import { abhimanyuPrompt } from "../prompts/abhimanyuPrompt.js";
 import { kshitijPrompt } from "../prompts/kshitijPrompt.js";
