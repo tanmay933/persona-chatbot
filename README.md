@@ -60,9 +60,6 @@ https://persona-chatbot-peach.vercel.app
 
 ## Screenshots
 
-### Chat Interface
-![Chat](assets/screenshots/chat.png)
-
 ### Persona Switching (Chat Reset)
 ![Persona Switching](assets/screenshots/persona-switch.png)
 
